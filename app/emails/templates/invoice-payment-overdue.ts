@@ -32,12 +32,7 @@ const InvoicePaymentOverdue = ({
         text-align: center;
         margin-bottom: 20px;
       }
-      .logo-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(135deg, #3b82f6, #1e40af);
-        border-radius: 12px;
+      .img{
         width: 50px;
         height: 50px;
         margin: 0 auto 10px;
@@ -99,11 +94,7 @@ const InvoicePaymentOverdue = ({
   <body>
     <div class="container">
       <div class="header">
-        <div class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote">
-            <rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>
-          </svg>
-        </div>
+        <img src="${process.env.NEXT_PUBLIC_APP_URL}/logo.png" alt="JRCInvoice Logo" />
         <div class="company-name">JRCInvoice</div>
       </div>
       <div class="content">
