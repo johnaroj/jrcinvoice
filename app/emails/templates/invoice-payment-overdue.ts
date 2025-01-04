@@ -7,7 +7,7 @@ const InvoicePaymentOverdue = ({
   contactLink?: string;
   unsubscribeLink?: string;
 }) => {
-  const logoUrl = process.env.NEXT_PUBLIC_URL + "/logo.png";
+  const logoUrl = process.env.NEXT_PUBLIC_APP_URL + "/logo.png";
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
