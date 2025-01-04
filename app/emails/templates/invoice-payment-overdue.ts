@@ -7,7 +7,14 @@ const InvoicePaymentOverdue = ({
   contactLink?: string;
   unsubscribeLink?: string;
 }) => {
-  const logoUrl = process.env.NEXT_PUBLIC_APP_URL + "/logo.png";
+  const banknoteIconSvg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="#ffffff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+      <circle cx="12" cy="12" r="2"></circle>
+      <path d="M6 12h.01"></path>
+      <path d="M18 12h.01"></path>
+    </svg>
+  `;
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -102,9 +109,7 @@ const InvoicePaymentOverdue = ({
     <div class="container">
       <div class="header">
         <div class="logo-icon">
-          <img
-          src="${logoUrl}"
-          alt="JRCInvoice Logo" width="24" height="24" />
+          ${banknoteIconSvg}
         </div>
         <div class="company-name">JRCInvoice</div>
       </div>
