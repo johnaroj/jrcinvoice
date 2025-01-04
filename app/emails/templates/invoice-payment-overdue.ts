@@ -65,7 +65,7 @@ const InvoicePaymentOverdue = ({
         text-align: center;
         margin-bottom: 30px;
       }
-      .button {
+      a.button {
         display: inline-block;
         padding: 15px 30px;
         background-color: #3b82f6;
@@ -89,12 +89,13 @@ const InvoicePaymentOverdue = ({
         color: #3b82f6;
         text-decoration: none;
       }
+
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
-        <img src="${process.env.NEXT_PUBLIC_APP_URL}/logo.png" alt="JRCInvoice Logo" />
+        <img src="${process.env.NEXT_PUBLIC_APP_URL}/jrc-invoice-logo.png" alt="JRCInvoice Logo" />
         <div class="company-name">JRCInvoice</div>
       </div>
       <div class="content">
