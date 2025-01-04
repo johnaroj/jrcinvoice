@@ -6,8 +6,9 @@ const InvoicePaymentOverdue = ({
   clientName: string;
   contactLink?: string;
   unsubscribeLink?: string;
-}) => `
-<!DOCTYPE html>
+}) => {
+  const logoUrl = "/logo.png";
+  return `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -102,7 +103,7 @@ const InvoicePaymentOverdue = ({
       <div class="header">
         <div class="logo-icon">
           <img
-          src=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJhbmtub3RlIj48cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMTIiIHg9IjIiIHk9IjYiIHJ4PSIyIi8+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMiIvPjxwYXRoIGQ9Ik02IDEyaC4wMU0xOCAxMmguMDEiLz48L3N2Zz4="
+          src="${logoUrl}"
           alt="JRCInvoice Logo" width="24" height="24" />
         </div>
         <div class="company-name">JRCInvoice</div>
@@ -126,7 +127,7 @@ const InvoicePaymentOverdue = ({
     </div>
   </body>
 </html>
-
 `;
+};
 
 export default InvoicePaymentOverdue;
