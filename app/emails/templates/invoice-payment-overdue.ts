@@ -6,17 +6,7 @@ const InvoicePaymentOverdue = ({
   clientName: string;
   contactLink?: string;
   unsubscribeLink?: string;
-}) => {
-  const banknoteIconSvg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="#ffffff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
-      <circle cx="12" cy="12" r="2"></circle>
-      <path d="M6 12h.01"></path>
-      <path d="M18 12h.01"></path>
-    </svg>
-  `;
-
-  return `<!DOCTYPE html>
+}) => `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -110,7 +100,9 @@ const InvoicePaymentOverdue = ({
     <div class="container">
       <div class="header">
         <div class="logo-icon">
-          ${banknoteIconSvg}
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote">
+            <rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>
+          </svg>
         </div>
         <div class="company-name">JRCInvoice</div>
       </div>
@@ -134,6 +126,5 @@ const InvoicePaymentOverdue = ({
   </body>
 </html>
 `;
-};
 
 export default InvoicePaymentOverdue;
