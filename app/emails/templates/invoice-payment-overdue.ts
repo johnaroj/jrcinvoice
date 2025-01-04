@@ -15,6 +15,7 @@ const InvoicePaymentOverdue = ({
       <path d="M18 12h.01"></path>
     </svg>
   `;
+
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
