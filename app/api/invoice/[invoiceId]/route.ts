@@ -22,11 +22,9 @@ export async function GET(
       clientAddress: true,
       date: true,
       dueDate: true,
-      invoiceItemDescription: true,
-      invoiceItemQuantity: true,
-      invoiceItemRate: true,
       total: true,
       notes: true,
+      items: true,
     },
   });
 
@@ -79,24 +77,29 @@ export async function GET(
 
   pdf.line(20, 102, 190, 102);
   pdf.setFont("helvetica", "normal");
-  pdf.text(invoice.invoiceItemDescription, 20, 110);
-  pdf.text(invoice.invoiceItemQuantity.toString(), 100, 110);
-  pdf.text(
-    formatCurrency({
-      amount: invoice.invoiceItemRate,
-      currency: invoice.currency as "USD" | "EUR",
-    }),
-    130,
-    110
-  );
-  pdf.text(
-    formatCurrency({
-      amount: invoice.total,
-      currency: invoice.currency as "USD" | "EUR",
-    }),
-    160,
-    110
-  );
+  const startY = 110;
+
+  invoice.items.forEach((item, index) => {
+    const rowY = startY + index * 10; // Adjust the row height as needed
+    pdf.text(item.description, 20, rowY);
+    pdf.text(item.quantity.toString(), 100, rowY);
+    pdf.text(
+      formatCurrency({
+        amount: item.rate,
+        currency: invoice.currency as "USD" | "EUR",
+      }),
+      130,
+      rowY
+    );
+    pdf.text(
+      formatCurrency({
+        amount: item.quantity * item.rate,
+        currency: invoice.currency as "USD" | "EUR",
+      }),
+      160,
+      rowY
+    );
+  });
 
   //Total section
   pdf.line(20, 115, 190, 115);

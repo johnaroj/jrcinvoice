@@ -58,13 +58,17 @@ export async function createInvoice(prevState: any, formData: FormData) {
       fromAddress: submission.value.fromAddress,
       fromEmail: submission.value.fromEmail,
       fromName: submission.value.fromName,
-      invoiceItemDescription: submission.value.invoiceItemDescription,
-      invoiceItemRate: submission.value.invoiceItemRate,
-      invoiceItemQuantity: submission.value.invoiceItemQuantity,
       invoiceNumber: submission.value.invoiceNumber,
       total: submission.value.total,
       notes: submission.value.notes,
       status: submission.value.status,
+      items: {
+        createMany: {
+          data: submission.value.items.map((item) => ({
+            ...item,
+          })),
+        },
+      },
       user: {
         connect: {
           id: session?.user?.id,
@@ -109,7 +113,20 @@ export async function updateInvoice(prevState: any, formData: FormData) {
   }
   await prisma.invoice.update({
     where: { id: formData.get("id") as string, userId: session?.user?.id },
-    data: submission.value,
+    data: {
+      ...submission.value,
+      user: {
+        connect: {
+          id: session?.user?.id,
+        },
+      },
+      items: {
+        deleteMany: {},
+        createMany: {
+          data: submission.value.items,
+        },
+      },
+    },
   });
 
   await sendEmail(

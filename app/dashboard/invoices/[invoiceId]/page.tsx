@@ -9,6 +9,9 @@ async function getInvoice(invoiceId: string, userId: string) {
       userId: userId,
       id: invoiceId,
     },
+    include: {
+      items: true,
+    },
   });
 
   if (!invoice) {
