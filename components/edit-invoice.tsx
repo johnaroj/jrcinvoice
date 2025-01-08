@@ -21,7 +21,7 @@ import SubmitButton from "./ui/submit-button";
 import { useActionState, useState } from "react";
 import { invoiceSchema } from "@/app/utils/zod-schemas";
 import { parseWithZod } from "@conform-to/zod";
-import { useForm } from "@conform-to/react";
+import { getInputProps, useForm } from "@conform-to/react";
 import { updateInvoice } from "@/app/actions";
 import { z } from "zod";
 
@@ -32,6 +32,9 @@ type EditInvoiceProps = {
 export function EditInvoice({ data }: EditInvoiceProps) {
   const [state, action] = useActionState(updateInvoice, undefined);
   const [form, fields] = useForm({
+    defaultValue: {
+      items: [{ description: "", quantity: 0, rate: 0 }],
+    },
     lastResult: state,
     onValidate({ formData }) {
       return parseWithZod(formData, {
@@ -43,11 +46,17 @@ export function EditInvoice({ data }: EditInvoiceProps) {
   });
   const [selectedDate, setSelectedDate] = useState<Date>(new Date(data.date));
   const [isOpen, setIsOpen] = useState(false);
-  const [rate, setRate] = useState(data.invoiceItemRate.toString());
-  const [quantity, setQuantity] = useState(data.invoiceItemQuantity.toString());
   const [currency, setCurrency] = useState(data.currency);
 
-  const calculateTotal = (Number(quantity) || 0) * (Number(rate) || 0);
+  const items = fields.items.getFieldList();
+
+  const calculateTotal = fields.items.getFieldList().reduce((total, item) => {
+    const itemFields = item.getFieldset();
+    const quantity = Number(itemFields.quantity.initialValue) || 0;
+    const rate = Number(itemFields.rate.initialValue) || 0;
+    return total + quantity * rate;
+  }, 0);
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="p-6">
@@ -239,54 +248,80 @@ export function EditInvoice({ data }: EditInvoiceProps) {
               <p className="col-span-2">Unit Price</p>
               <p className="col-span-2">Amount</p>
             </div>
-            <div className="grid grid-cols-12 gap-4 mb-4">
-              <div className="col-span-6">
-                <Textarea
-                  name={fields.invoiceItemDescription.name}
-                  key={fields.invoiceItemDescription.key}
-                  defaultValue={data.invoiceItemDescription || ""}
-                  placeholder="Item name & Description"
-                />
-                <p className="text-sm text-red-500">
-                  {fields.invoiceItemDescription.errors}
-                </p>
-              </div>
-              <div className="col-span-2">
-                <Input
-                  type="number"
-                  placeholder="0"
-                  name={fields.invoiceItemQuantity.name}
-                  key={fields.invoiceItemQuantity.key}
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-                <p className="text-sm text-red-500">
-                  {fields.invoiceItemQuantity.errors}
-                </p>
-              </div>
-              <div className="col-span-2">
-                <Input
-                  type="number"
-                  placeholder="0"
-                  name={fields.invoiceItemRate.name}
-                  key={fields.invoiceItemRate.key}
-                  value={rate}
-                  onChange={(e) => setRate(e.target.value)}
-                />
-                <p className="text-sm text-red-500">
-                  {fields.invoiceItemRate.errors}
-                </p>
-              </div>
-              <div className="col-span-2">
-                <Input
-                  disabled
-                  value={formatCurrency({
-                    amount: calculateTotal,
-                    currency: currency as "USD" | "EUR",
-                  })}
-                />
-              </div>
-            </div>
+            {items.map((item, index) => {
+              const itemFields = item.getFieldset();
+              const lineTotal =
+                (Number(itemFields.quantity.initialValue) || 0) *
+                (Number(itemFields.rate.initialValue) || 0);
+              return (
+                <div key={index} className="grid grid-cols-12 gap-4 mb-4">
+                  <div className="col-span-6">
+                    <Textarea
+                      className={
+                        !itemFields.description.valid ? "border-red-500" : ""
+                      }
+                      {...getInputProps(itemFields.description, {
+                        type: "text",
+                      })}
+                      key={itemFields.description.key}
+                      placeholder="Item name & Description"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Input
+                      className={
+                        !itemFields.quantity.valid ? "border-red-500" : ""
+                      }
+                      {...getInputProps(itemFields.quantity, {
+                        type: "number",
+                      })}
+                      key={itemFields.quantity.key}
+                      placeholder="Quantity"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Input
+                      className={!itemFields.rate.valid ? "border-red-500" : ""}
+                      {...getInputProps(itemFields.rate, {
+                        type: "number",
+                      })}
+                      key={itemFields.rate.key}
+                      placeholder="Rate"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Input
+                      disabled
+                      value={formatCurrency({
+                        amount: lineTotal,
+                        currency: currency as "USD" | "EUR",
+                      })}
+                    />
+                  </div>
+                  {items.length - 1 === index && (
+                    <div className="col-span-12 flex justify-between">
+                      <Button
+                        variant="secondary"
+                        {...form.remove.getButtonProps({
+                          name: "items",
+                          index: index,
+                        })}
+                      >
+                        Remove
+                      </Button>
+                      <Button
+                        variant="outline"
+                        {...form.insert.getButtonProps({
+                          name: "items",
+                        })}
+                      >
+                        Add Item
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
           <div className="flex justify-end">
             <div className="w-1/3">

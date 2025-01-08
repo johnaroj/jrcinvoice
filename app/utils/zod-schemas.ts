@@ -24,13 +24,11 @@ export const invoiceSchema = z.object({
   currency: z.string().min(1, { message: "Currency is required" }),
   invoiceNumber: z.number().min(1, { message: "Minimum invoice number is 1" }),
   notes: z.string().nullish(),
-  invoiceItemDescription: z
-    .string()
-    .min(1, { message: "Invoice item description is required" }),
-  invoiceItemRate: z
-    .number()
-    .min(1, { message: "Invoice item rate is required" }),
-  invoiceItemQuantity: z
-    .number()
-    .min(1, { message: "Invoice item quantity is required" }),
+  items: z.array(
+    z.object({
+      description: z.string().min(1, { message: "Description is required" }),
+      rate: z.number().min(1, { message: "Rate is required" }),
+      quantity: z.number().min(1, { message: "Quantity is required" }),
+    })
+  ),
 });

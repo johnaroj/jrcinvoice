@@ -95,13 +95,20 @@ model Invoice {
   currency String
   invoiceNumber Int
   notes String?
-  invoiceItemDescription String
-  invoiceItemRate Int
-  invoiceItemQuantity Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items InvoiceItem[]
+}
+
+model InvoiceItem {
+  id String @id @default(uuid())
+  invoiceId String
+  description String
+  rate Int
+  quantity Int
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 }
 
 enum InvoiceStatus {
