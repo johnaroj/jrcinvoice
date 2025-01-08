@@ -121,9 +121,25 @@ export async function updateInvoice(prevState: any, formData: FormData) {
         },
       },
       items: {
-        deleteMany: {},
-        createMany: {
-          data: submission.value.items,
+        upsert: submission.value.items.map((item) => ({
+          where: { id: item.id ?? "dummy-id" }, // Use a dummy ID if itemId is not present
+          create: {
+            description: item.description,
+            rate: item.rate,
+            quantity: item.quantity,
+          },
+          update: {
+            description: item.description,
+            rate: item.rate,
+            quantity: item.quantity,
+          },
+        })),
+        deleteMany: {
+          id: {
+            in: submission.value.items
+              .map((item) => item.id)
+              .filter((id): id is string => id !== undefined),
+          },
         },
       },
     },

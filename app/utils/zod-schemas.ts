@@ -26,6 +26,7 @@ export const invoiceSchema = z.object({
   notes: z.string().nullish(),
   items: z.array(
     z.object({
+      id: z.string().optional(),
       description: z.string().min(1, { message: "Description is required" }),
       rate: z.number().min(1, { message: "Rate is required" }),
       quantity: z.number().min(1, { message: "Quantity is required" }),
