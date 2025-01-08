@@ -60,8 +60,8 @@ export function CreateInvoice({
 
   const calculateTotal = fields.items.getFieldList().reduce((total, item) => {
     const itemFields = item.getFieldset();
-    const quantity = Number(itemFields.quantity.initialValue) || 0;
-    const rate = Number(itemFields.rate.initialValue) || 0;
+    const quantity = Number(itemFields.quantity.value) || 0;
+    const rate = Number(itemFields.rate.value) || 0;
     return total + quantity * rate;
   }, 0);
 
@@ -259,8 +259,8 @@ export function CreateInvoice({
             {items.map((item, index) => {
               const itemFields = item.getFieldset();
               const lineTotal =
-                (Number(itemFields.quantity.initialValue) || 0) *
-                (Number(itemFields.rate.initialValue) || 0);
+                (Number(itemFields.quantity.value) || 0) *
+                (Number(itemFields.rate.value) || 0);
               return (
                 <div key={index} className="grid grid-cols-12 gap-4 mb-4">
                   <div className="col-span-6">
