@@ -2,6 +2,7 @@ import prisma from "@/app/utils/db";
 import { NextResponse } from "next/server";
 import jsPDF from "jspdf";
 import { formatCurrency } from "@/app/utils/format-currency";
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ invoiceId: string }> }
@@ -37,18 +38,19 @@ export async function GET(
     unit: "mm",
     format: "a4",
   });
-  //set font
+
+  // Set font
   pdf.setFont("helvetica");
   pdf.setFontSize(24);
   pdf.text(invoice.invoiceName, 20, 20);
 
-  //from section
+  // From section
   pdf.setFontSize(12);
   pdf.text("From:", 20, 40);
   pdf.setFontSize(10);
   pdf.text([invoice.fromName, invoice.fromAddress, invoice.fromEmail], 20, 45);
 
-  //client section
+  // Client section
   pdf.setFontSize(12);
   pdf.text("Bill to:", 20, 70);
   pdf.setFontSize(10);
@@ -58,7 +60,7 @@ export async function GET(
     75
   );
 
-  //invoice details
+  // Invoice details
   pdf.setFontSize(10);
   pdf.text(`Invoice Number: #${invoice.invoiceNumber}`, 120, 40);
   pdf.text(
@@ -69,27 +71,28 @@ export async function GET(
     45
   );
   pdf.text(`Due Date: Net ${invoice.dueDate} days`, 120, 50);
+
+  // Table headers
   pdf.setFont("helvetica", "bold");
   pdf.text("Description", 20, 100);
   pdf.text("Quantity", 100, 100);
   pdf.text("Rate", 130, 100);
   pdf.text("Total", 160, 100);
-
   pdf.line(20, 102, 190, 102);
-  pdf.setFont("helvetica", "normal");
-  const startY = 110;
 
-  invoice.items.forEach((item, index) => {
-    const rowY = startY + index * 10; // Adjust the row height as needed
-    pdf.text(item.description, 20, rowY);
-    pdf.text(item.quantity.toString(), 100, rowY);
+  // Add items dynamically
+  pdf.setFont("helvetica", "normal");
+  let currentY = 110;
+  invoice.items.forEach((item) => {
+    pdf.text(item.description, 20, currentY);
+    pdf.text(item.quantity.toString(), 100, currentY);
     pdf.text(
       formatCurrency({
         amount: item.rate,
         currency: invoice.currency as "USD" | "EUR",
       }),
       130,
-      rowY
+      currentY
     );
     pdf.text(
       formatCurrency({
@@ -97,36 +100,42 @@ export async function GET(
         currency: invoice.currency as "USD" | "EUR",
       }),
       160,
-      rowY
+      currentY
     );
+    currentY += 10; // Move to the next line for the next item
   });
 
-  //Total section
-  pdf.line(20, 115, 190, 115);
+  // Total section
+  currentY += 10; // Add some space after the items
+  pdf.line(20, currentY, 190, currentY);
+  currentY += 5;
   pdf.setFont("helvetica", "bold");
-  pdf.text(`Total (${invoice.currency})`, 130, 130);
+  pdf.text(`Total (${invoice.currency})`, 130, currentY);
   pdf.text(
     formatCurrency({
       amount: invoice.total,
       currency: invoice.currency as "USD" | "EUR",
     }),
     160,
-    130
+    currentY
   );
+
+  // Notes section
   if (invoice.notes) {
+    currentY += 10;
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(10);
-    pdf.text("Notes:", 20, 140);
-    pdf.text(invoice.notes, 20, 145);
+    pdf.text("Notes:", 20, currentY);
+    pdf.text(invoice.notes, 20, currentY + 5);
   }
 
   const pdfBuffer = Buffer.from(pdf.output("arraybuffer"));
 
-  //return pdf as a file
+  // Return PDF as a file
   return new NextResponse(pdfBuffer, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": "inline; filename=" + invoice.invoiceName,
+      "Content-Disposition": `inline; filename="${invoice.invoiceName}.pdf"`,
     },
   });
 }
